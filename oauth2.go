@@ -27,7 +27,7 @@ type TeamMember struct {
 	User            *User           `json:"user"`
 	TeamID          string          `json:"team_id"`
 	MembershipState MembershipState `json:"membership_state"`
-	Permissions     []string        `json:"permissions"`
+	Role            string          `json:"role"`
 }
 
 // A Team struct stores the members of a Discord Developer Team as well as some metadata about it
