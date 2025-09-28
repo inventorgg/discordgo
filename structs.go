@@ -137,6 +137,9 @@ type Session struct {
 
 	// used to make sure gateway websocket writes do not happen concurrently
 	wsMutex sync.Mutex
+
+	// identifier for a discordgo session
+	Identifier string
 }
 
 // ApplicationIntegrationType dictates where application can be installed and its available interaction contexts.

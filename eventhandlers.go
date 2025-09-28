@@ -62,6 +62,7 @@ const (
 	presencesReplaceEventType                    = "PRESENCES_REPLACE"
 	rateLimitEventType                           = "__RATE_LIMIT__"
 	readyEventType                               = "READY"
+	restAPIErrorEventType                        = "REST_APIERROR"
 	resumedEventType                             = "RESUMED"
 	stageInstanceEventCreateEventType            = "STAGE_INSTANCE_EVENT_CREATE"
 	stageInstanceEventDeleteEventType            = "STAGE_INSTANCE_EVENT_DELETE"
@@ -1162,6 +1163,26 @@ func (eh readyEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
+// restAPIErrorEventHandler is an event handler for RestAPIError events.
+type restAPIErrorEventHandler func(*Session, *RestAPIError)
+
+// Type returns the event type for RestAPIError events.
+func (eh restAPIErrorEventHandler) Type() string {
+	return restAPIErrorEventType
+}
+
+// New returns a new instance of RestAPIError.
+func (eh restAPIErrorEventHandler) New() interface{} {
+	return &RestAPIError{}
+}
+
+// Handle is the handler for RestAPIError events.
+func (eh restAPIErrorEventHandler) Handle(s *Session, i interface{}) {
+	if t, ok := i.(*RestAPIError); ok {
+		eh(s, t)
+	}
+}
+
 // resumedEventHandler is an event handler for Resumed events.
 type resumedEventHandler func(*Session, *Resumed)
 
@@ -1636,6 +1657,8 @@ func handlerForInterface(handler interface{}) EventHandler {
 		return rateLimitEventHandler(v)
 	case func(*Session, *Ready):
 		return readyEventHandler(v)
+	case func(*Session, *RestAPIError):
+		return restAPIErrorEventHandler(v)
 	case func(*Session, *Resumed):
 		return resumedEventHandler(v)
 	case func(*Session, *StageInstanceEventCreate):
@@ -1729,6 +1752,7 @@ func init() {
 	registerInterfaceProvider(presenceUpdateEventHandler(nil))
 	registerInterfaceProvider(presencesReplaceEventHandler(nil))
 	registerInterfaceProvider(readyEventHandler(nil))
+	registerInterfaceProvider(restAPIErrorEventHandler(nil))
 	registerInterfaceProvider(resumedEventHandler(nil))
 	registerInterfaceProvider(stageInstanceEventCreateEventHandler(nil))
 	registerInterfaceProvider(stageInstanceEventDeleteEventHandler(nil))

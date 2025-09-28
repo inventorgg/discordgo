@@ -306,6 +306,19 @@ func (s *Session) RequestWithLockedBucket(method, urlStr, contentType string, b 
 		err = newRestError(req, resp, response)
 	}
 
+	var errorStr string
+	logError := newRestError(req, resp, response)
+
+	if logError.Message != nil {
+		errorStr = logError.Message.Message
+	} else {
+		errorStr = logError.Error()
+	}
+
+	if resp.StatusCode == 401 || resp.StatusCode == 403 {
+		s.handleEvent(restAPIErrorEventType, &RestAPIError{Code: resp.StatusCode, URL: urlStr, Err: errorStr})
+	}
+
 	return
 }
 

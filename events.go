@@ -24,6 +24,14 @@ type RateLimit struct {
 	URL string
 }
 
+// RestAPIError is the data for a RestAPI error
+// This is a synthetic event and is not dispatched by Discord.
+type RestAPIError struct {
+	URL  string
+	Err  string
+	Code int
+}
+
 // Event provides a basic initial struct for all websocket events.
 type Event struct {
 	Operation int             `json:"op"`
